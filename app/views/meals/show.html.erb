@@ -1,0 +1,46 @@
+<p id="notice"><%= notice %></p>
+
+<h1><%= @meal.name %></h1>
+
+<p>
+  <b>Date:</b>
+  <%= @meal.date %>
+</p>
+
+<p>
+  <b>Time:</b>
+  <%= @meal.time %>
+</p>
+
+<p>
+  <b>Day :</b>
+  <%= (@meal.dayOn)?"ON":"OFF" %>
+</p>
+
+<% if @meal.ingredients.size > 0 %>
+<div id="meal">
+<% 
+	@meal.ingredients.each do |ing| 
+%>
+	<p>
+		<%= link_to image_tag("database-delete.ico", :size => "16x16"), del_ingredient_path(ing), :class => "button_img", :confirm => "Are you sure you want to delete #{ing.name} from the database?" %>
+		<span><%= ing.name %></span>
+		<span><%= amount = @meal.amounts.find_by_ingredient_id(ing.id).ingredientAmount %>grs</span> 
+		<span><%= ing.cal*amount/100 %></span>
+		</li>
+	</p>
+<% end%>
+</div>
+<p id='totalCal'><%= @meal.totalCal %></p>
+<% end %>
+<%= form_tag add_ingredient_meal_path do %>
+<p>
+<%= select :amount, :ingredient_id, Ingredient.all.collect{|p| [p.name, p.id]}%>
+<%= text_field_tag :ingredientAmount %>
+<%= submit_tag "add" %>
+</p>
+<% end %>
+
+<hr/>
+<%= link_to 'Edit', edit_meal_path(@meal) %> |
+<%= link_to 'Back', meals_path %>

@@ -1,0 +1,132 @@
+<!--<p id="notice"><%= notice %></p>-->
+
+<% unless @meals.empty? %>
+
+<script type="text/javascript" charset="utf-8">
+var chart1; // globally available
+$(document).ready(function() {
+      chart1 = new Highcharts.Chart({
+         chart: {
+            renderTo: 'calChart',
+         },
+         title: {
+          text: 'Daily intake <%= "#{number_with_precision(@totalDailyCal, :precision => 2, :separator => ',', :delimiter => ' ')} kcal"%>'
+         },
+           plotOptions: {
+              pie: {
+                 allowPointSelect: true,
+                 cursor: 'pointer',
+                 dataLabels: {
+                    enabled: false
+                 },
+                 showInLegend: true
+              }
+           },
+         series: [{
+          type: 'pie',
+          name: 'Browser share',
+          data: [
+          ['Fat',   <%= number_with_precision(@totalDailyFat, :precision => 2, ) %>],
+          ['Carbs', <%= number_with_precision(@totalDailyCarbs , :precision => 2) %> ],
+             {
+                name: 'Prots',
+                y: <%= number_with_precision(@totalDailyProtein, :precision => 1)%>,
+                sliced: true,
+                selected: true
+             }]
+
+         }]
+      });
+      chart2 = new Highcharts.Chart({
+         chart: {
+            renderTo: 'evolutionChart',
+         },
+         title: {
+          text: 'Daily intake <%= "#{number_with_precision(@totalDailyCal, :precision => 2, :separator => ',', :delimiter => ' ')} kcal"%>'
+         },
+         title: {
+           text: "Orders by Day"
+         },
+         xAxis: {
+          type: "datetime"
+         },
+         yAxis: {
+           title: {
+             text: "Dollars"
+           }
+         },
+         tooltip: {
+           formatter: function() {
+             return Highcharts.dateFormat("%B %e, %Y", this.x) + ': ' +
+             "$" + Highcharts.numberFormat(this.y, 2);
+           }
+         },
+         series: [{
+          name: 'Browser share',
+          pointInterval: <%= 1.day * 1000 %>,
+          pointStart: <%= 2.weeks.ago.to_i * 1000 %>,
+          data: [1, 2, 3, 4, 12 , 5, 2, 4, 11, 3, 9, 6]
+         }]
+      });
+   });
+</script>
+
+<% end %>
+
+<div id="mealsHeader">
+  <p class="c1"><%= link_to 'New Meal', new_meal_path %> </p>
+  <p class="c2"> | </p>
+  <p class="c3"> <%= link_to 'Manage ingredients', ingredients_path %></p> 
+  <p class="verte">&nbsp;</p>
+  <p class="spacer"></p>
+</div>
+
+<h1>Listing meals on <%= @date.strftime "%B %A %e, %Y" %></h1>
+
+<div id="container">
+
+  <div type="text" id="datepicker" class="item"></div>
+
+  <div class="item buttonDate">
+<%= form_tag meals_path, :method => 'get' do %> 
+  <%= hidden_field_tag :selectedDate %>
+  <%= submit_tag "Take me to this day !"%>
+<% end %>
+  </div>
+
+  <div class="item buttonDate">
+  	<div id="calChart"></div>
+  </div>
+
+  <div class="item evol">
+  	<div id="evolutionChart"></div>
+  </div>
+
+<% if @meals.empty? %>
+<div class="item">
+	<h3>Sorry no meal yet :(</h3>
+   <p></p>
+	<h4><%= link_to 'New Meal', new_meal_path %></h4>
+</div>
+<% else %>
+  
+  <% @meals.each do |meal| %>
+<div class="item">
+    <div class="mealIndexDivTitle boxBigContain">
+      <p class="mealIndexHeaderTime boxSmallFloatRight"><%= meal.time.strftime "%H:%M" %></p>
+      <h2><%=link_to meal.name, meal %></h2>
+      <p class="spacer"></p>
+    </div>
+  <p>
+    <!--<span><%= meal.dayOn == true ? "Day ON" : "Day OFF" %></span>-->
+    <span>Cal: <%= number_with_precision(meal.totalCal, :precision => 2, :separator => ',', :delimiter => ' ') %></span>
+    <span> ( <%= number_with_precision(meal.totalProtein, :precision => 2, :separator => ',', :delimiter => ' ') %> |</span>
+    <span> <%= number_with_precision(meal.totalCarbs, :precision => 2, :separator => ',', :delimiter => ' ') %> |</span>
+    <span> <%= number_with_precision(meal.totalFat, :precision => 2, :separator => ',', :delimiter => ' ') %> )</span>
+  </p>
+</div>
+  <% end #@meal.each %>
+
+<% end #@meal.empty %>
+
+</div>

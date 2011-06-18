@@ -1,0 +1,43 @@
+
+<div id="mealHeader">
+  <p class="c1"><%= link_to 'New Ingredient', new_ingredient_path %></p>
+  <p class="c2"> | </p>
+  <p class="c3"> <%= link_to 'Back to Meals', meals_path %></p> 
+  <p class="verte">&nbsp;</p>
+  <p class="spacer"></p>
+</div>
+
+<h1>Listing ingredients</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Brand</th>
+    <th>Category</th>
+    <th>Protein</th>
+    <th>Carbs</th>
+    <th>Fat</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @ingredients.each do |ingredient| %>
+  <tr>
+    <td><%= ingredient.name %></td>
+    <td><%= ingredient.description %></td>
+    <td><%= ingredient.brand %></td>
+    <td><%= ingredient.category_id %></td>
+    <td><%= ingredient.protein %></td>
+    <td><%= ingredient.carbs %></td>
+    <td><%= ingredient.fat %></td>
+    <td><%= link_to 'Show', ingredient %></td>
+    <td><%= link_to 'Edit', edit_ingredient_path(ingredient) %></td>
+    <td><%= link_to 'Destroy', ingredient, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
